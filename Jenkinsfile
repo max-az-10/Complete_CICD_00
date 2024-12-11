@@ -1,12 +1,10 @@
 pipeline {
-	agent any
 
 	agent any
 
 	tools {
-		nodejs 'NodeJS'
-	}
-
+        	nodejs 'NodeJS' // Make sure this name matches the NodeJS installation name in Global Tool Configuration
+    	}
 	
 	stages {
 		stage('GitHub'){
