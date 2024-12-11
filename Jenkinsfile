@@ -57,7 +57,7 @@ pipeline {
 		stage('Trivy scan') {
                         steps {
                                 script {
-                                	sh "trivy image --severity HIGH,CRITICAL --no-progress --format html -o trivy-report.html ${DOCKER_HUB_REPO}:latest"
+                                	sh "trivy image --severity HIGH,CRITICAL --no-progress --format table -o trivy-report.html ${DOCKER_HUB_REPO}:latest"
                                 }
                         }
                 }
