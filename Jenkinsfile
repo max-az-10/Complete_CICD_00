@@ -3,17 +3,7 @@ pipeline {
 	tools {
 		nodejs 'NodeJS'
 	}
-	environment {
-		SONAR_PROJECT_KEY = 'complete-cicd-02'
-		SONAR_SCANNER_HOME = tool 'SonarQubeScanner'
-		JOB_NAME_NOW = 'cicd02'
-		ECR_REPO = 'iquantawsrepo'
-		IMAGE_TAG = 'latest'
-		ECR_REGISTRY = '358966077154.dkr.ecr.us-east-1.amazonaws.com'
-		ECS_CLUSTER = 'iquant-ecs'
-		ECS_SERVICE = 'iquant-ecs-svc'
-		ALB_TARGET_GROUP_ARN = 'ecs-iquant-svc-tg'
-	}
+	
 	stages {
 		stage('GitHub'){
 			steps {
