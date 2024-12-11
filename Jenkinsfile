@@ -9,6 +9,7 @@ pipeline {
 	environment {
 		SONAR_PROJECT_KEY = 'Complete-CICD'
 		SONAR_SCANNER_HOME = tool 'SonarQubeScanner'
+		IMAGE_TAG = 'latest'
 		DOCKER_HUB_REPO = 'max400/complete-cicd-repo'		
 
 	}	
@@ -49,7 +50,7 @@ pipeline {
 		stage('Docker image') {
                         steps {
                         	script {
-					docker.build ("$DOCKER_HUB_REPO:latest")
+					docker.build ("$DOCKER_HUB_REPO:IMAGE_TAG")
 				}
 			}
                 }
@@ -57,7 +58,7 @@ pipeline {
 		stage('Trivy scan') {
                         steps {
                                 script {
-                                	sh "trivy image --severity HIGH,CRITICAL --no-progress --format table -o trivy-report.html ${DOCKER_HUB_REPO}:latest"
+                                	sh "trivy image --severity HIGH,CRITICAL --no-progress --format table -o trivy-report.html ${DOCKER_HUB_REPO}:IMAGE_TAG"
                                 }
                         }
                 }
