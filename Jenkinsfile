@@ -10,8 +10,10 @@ pipeline {
 		SONAR_PROJECT_KEY = 'Complete-CICD'
 		SONAR_SCANNER_HOME = tool 'SonarQubeScanner'
 		IMAGE_TAG = 'latest'
-		DOCKER_HUB_REPO = 'max400/complete-cicd-repo'		
-
+		ECR_REPO = 'complete-cicd-repo'	//DOCKER_HUB_REPO = 'max400/complete-cicd-repo'
+		ECR_REGISTRY = '381492139836.dkr.ecr.us-west-2.amazonaws.com'
+		// ECS_CLUSTER = '' 
+		// ECS_SERVICE = ''
 	}	
 
 	stages {
@@ -50,7 +52,7 @@ pipeline {
 		stage('Docker image') {
                         steps {
                         	script {
-					docker.build ("$DOCKER_HUB_REPO:IMAGE_TAG")
+					sh "docker build -t ${ECR_REGISTRY}/${ECR_REPO}:${IMAGE_TAG} ."
 				}
 			}
                 }
@@ -58,11 +60,31 @@ pipeline {
 		stage('Trivy scan') {
                         steps {
                                 script {
-                                	sh "trivy image --severity HIGH,CRITICAL --no-progress --format table -o trivy-report.html ${DOCKER_HUB_REPO}:IMAGE_TAG"
+					sh "trivy image --severity HIGH,CRITICAL --no-progress --format table -o trivy-report.html ${ECR_REGISTRY}/${ECR_REPO}:${IMAGE_TAG}"
                                 }
                         }
                 }
-	}
+		
+		stage('Login to ECR') {
+			withCredentials([usernamePassword(credentialsId: 'ecr:us-east-1:Aws-cred', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
+    				steps {
+        	                        sh """
+					aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin $ECR_REGISTRY
+					"""
+                                }
+                        } 
+		}
+
+		stage('Push to ECR') {
+                        withCredentials([usernamePassword(credentialsId: 'ecr:us-east-1:Aws-cred', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
+                                steps {
+                                        sh """
+					docker tag $ECR_REPO:latest $ECR_REGISTRY/$ECR_REPO:latest
+					docker push $ECR_REGISTRY/$ECR_REPO:latest
+                                        """
+                                }        
+			}
+		}
 }
 
 
