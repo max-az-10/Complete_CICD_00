@@ -34,7 +34,6 @@ pipeline {
 		stage('SonarQube Analysis') {
                         steps {
 				withCredentials([string(credentialsId: 'Complete_CICD_Sonar', variable: 'SONAR_TOKEN')]) {
-
 					withSonarQubeEnv('SonarQube') {	
 						sh """
 						${SONAR_SCANNER_HOME}/bin/sonar-scanner \
@@ -43,7 +42,6 @@ pipeline {
   						-Dsonar.host.url=http://172.30.56.3:9000 \
   						-Dsonar.login=${SONAR_TOKEN}	
 						"""						
-					
 					}
 				}
                         }
