@@ -9,7 +9,8 @@ pipeline {
 	environment {
 		SONAR_PROJECT_KEY = 'Complete-CICD'
 		SONAR_SCANNER_HOME = tool 'SonarQubeScanner'
-		
+		DOCKER_HUB_REPO = 'max400/complete-cicd-repo'		
+
 	}	
 
 	stages {
@@ -43,6 +44,14 @@ pipeline {
 					}
 				}
                         }
+                }
+
+		stage('Docker image') {
+                        steps {
+                        	script {
+					docker.build ("$DOCKER_HUB_REPO:latest")
+				}
+			}
                 }
 	}
 }
