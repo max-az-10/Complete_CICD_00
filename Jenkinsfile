@@ -12,8 +12,9 @@ pipeline {
                 IMAGE_TAG = 'latest'
                 ECR_REPO = 'complete-cicd-repo' //DOCKER_HUB_REPO = 'max400/complete-cicd-repo'
                 ECR_REGISTRY = '381492139836.dkr.ecr.us-west-2.amazonaws.com'
-                // ECS_CLUSTER = ''
-                // ECS_SERVICE = ''
+                ECS_CLUSTER = 'Complete-CICD-Cluster'
+                ECS_SERVICE = 'Complete-CICD-Service'
+		ECS_TASK_DEF_ARN = ''
         }
 
         stages {
@@ -78,6 +79,16 @@ pipeline {
                                 withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'Aws-cred', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
                                         sh """
                                         docker push $ECR_REGISTRY/$ECR_REPO:${IMAGE_TAG}
+                                        """
+                                }
+                        }
+                }
+		
+		stage('Deploy to ECS') {
+                        steps {
+                                withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'Aws-cred', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                                        sh """
+                                    	aws ecs update-service --cluster ECS_CLUSTER --service ECS_SERVICE --task-definition Complete-CICD-TaskD    
                                         """
                                 }
                         }
