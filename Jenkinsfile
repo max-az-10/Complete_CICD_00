@@ -14,7 +14,7 @@ pipeline {
                 ECR_REGISTRY = '381492139836.dkr.ecr.us-west-2.amazonaws.com'
                 ECS_CLUSTER = 'Complete-CICD-Cluster'
                 ECS_SERVICE = 'Complete-CICD-Service'
-		ECS_TASK_DEF_ARN = ''
+		ECS_TASK_DEF = 'Complete-CICD-TaskD'
         }
 
         stages {
@@ -88,7 +88,7 @@ pipeline {
                         steps {
                                 withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'Aws-cred', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
                                         sh """
-                                    	aws ecs update-service --cluster ECS_CLUSTER --service ECS_SERVICE --task-definition Complete-CICD-TaskD    
+                                    	aws ecs update-service --cluster ECS_CLUSTER --service ECS_SERVICE --task-definition ECS_TASK_DEF    
                                         """
                                 }
                         }
